@@ -50,28 +50,10 @@ func main() {
 }
 
 
-func time_response(req* http.Request, req_time_chan chan<- float64) {
-	// http client
-	client := &http.Client{}
-
-	// make request and time it
-	start := time.Now()
-	_, err := client.Do(req)
-	elapsed := time.Since(start)
-
-	// if there was a request error
-	if err != nil {
-		fmt.Printf("Do: %s\n", err)
-	}
-
-	req_time_chan <- elapsed.Seconds() * 1000
-}
-
-
 func benchmark_process(req* http.Request, count int) ([]float64){
-	// channel for request times
+	// channel and array for request times
+	// channel is used because it's quick
 	req_time_chan := make(chan float64, count)
-
 	req_times := make([]float64, count)
 
 	// start all requests
@@ -87,4 +69,22 @@ func benchmark_process(req* http.Request, count int) ([]float64){
 	close(req_time_chan)
 
 	return req_times
+}
+
+
+func time_response(req* http.Request, req_time_chan chan<- float64) {
+	// http client
+	client := &http.Client{}
+
+	// make request and time it
+	start := time.Now()
+	_, err := client.Do(req)
+	elapsed := time.Since(start)
+
+	// if there was a request error
+	if err != nil {
+		fmt.Printf("Do: %s\n", err)
+	}
+
+	req_time_chan <- elapsed.Seconds() * 1000
 }
