@@ -1,5 +1,4 @@
 
-
 package main
 
 import (
@@ -9,7 +8,6 @@ import (
 	// "math"
 	"flag"
 )
-
 
 func main() {
 
@@ -49,7 +47,6 @@ func main() {
 	}
 }
 
-
 func benchmark_process(req* http.Request, count int) ([]float64){
 	// channel and array for request times
 	// channel is used because it's quick
@@ -71,7 +68,6 @@ func benchmark_process(req* http.Request, count int) ([]float64){
 	return req_times
 }
 
-
 func time_response(req* http.Request, req_time_chan chan<- float64) {
 	// http client
 	client := &http.Client{}
@@ -87,4 +83,48 @@ func time_response(req* http.Request, req_time_chan chan<- float64) {
 	}
 
 	req_time_chan <- elapsed.Seconds() * 1000
+}
+
+func calculate_min(req_times []float64) (float64) {
+	var min_value float64 = req_times[0]
+
+	for i := 1; i < len(req_times); i++ {
+		if req_times[i] < min_value {
+			min_value = req_times[i]
+		}
+	}
+
+	return min_value
+}
+
+func calculate_max(req_times []float64) (float64) {
+	var max_value float64 = req_times[0]
+
+	for i := 1; i < len(req_times); i++ {
+		if req_times[i] > max_value {
+			max_value = req_times[i]
+		}
+	}
+
+	return max_value
+}
+
+func calculate_average(req_times []float64) (float64) {
+	var total_value float64 = 0
+
+	for i := 0; i < len(req_times); i++ {
+		total_value += req_times[i]
+	}
+
+	return total_value / float64(len(req_times))
+}
+
+func calculate_median(req_times []float64) (float64) {
+	n := len(req_times)
+
+	if (n % 2) == 0 {
+		// average of values either side of the middle
+		return (req_times[n/2 - 1] + req_times[n/2])/2.0
+	}
+	return req_times[(n-1)/2]
 }
