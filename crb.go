@@ -4,8 +4,8 @@ package main
 
 import (
 	"fmt"
-	// "net/http"
-	// "time"
+	"net/http"
+	"time"
 	// "math"
 	"flag"
 )
@@ -31,4 +31,22 @@ func main() {
 	} else {
 		fmt.Println("We are not running in verbose mode")
 	}
+}
+
+
+func time_response(req_times chan<- float64, req* http.Request) {
+	// http client
+	client := &http.Client{}
+
+	// make request and time it
+	start := time.Now()
+	_, err := client.Do(req)
+	elapsed := time.Since(start)
+
+	// if there was a request error
+	if err != nil {
+		fmt.Printf("Do: %s\n", err)
+	}
+
+	req_times <- elapsed.Seconds() * 1000
 }
