@@ -18,7 +18,7 @@ func main() {
 	countPtr := flag.Int("count", 1, "number of desired concurrent hits")
 	loopPtr := flag.Int("loops", 1, "number of times to repeat the process")
 	cooldownPtr := flag.Int("cooldown", 1000, "ms to wait between loops")
-	verbosePtr := flag.Bool("verbose", false, "enable extra information")
+	// verbosePtr := flag.Bool("verbose", false, "enable extra information")
 	flag.Parse()
 
 	// if no URL specified
@@ -26,18 +26,6 @@ func main() {
 		fmt.Println("Please enter a URL to hit with: -url \"https://...\"")
 		return
 	}
-
-	fmt.Printf("URL to request: %s\n", *urlPtr)
-	fmt.Printf("We will hit this with %d hits\n", *countPtr)
-	fmt.Printf("We will repeat this process %d times\n", *loopPtr)
-	fmt.Printf("We will wait %dms between the processes\n", *cooldownPtr)
-
-	if *verbosePtr {
-		fmt.Println("We are running in verbose mode")
-	} else {
-		fmt.Println("We are not running in verbose mode")
-	}
-
 
 	// build request
 	req, err := http.NewRequest("GET", *urlPtr, nil)
@@ -50,8 +38,14 @@ func main() {
 	all_times := make([][]float64, *loopPtr)
 
 	// number of processes
-	for loopNb := 0; loopNb < *loopPtr; loopNb++ {
-		all_times[loopNb] = benchmark_process(req, *countPtr)
+	for loopNb := 1; loopNb <= *loopPtr; loopNb++ {
+		if *loopPtr > 1 {
+			fmt.Printf("--LOOP %d OF %d--\n", loopNb, *loopPtr)
+		}
+
+		all_times[loopNb-1] = benchmark_process(req, *countPtr)
+
+		time.Sleep(time.Duration(*cooldownPtr) * time.Millisecond)
 	}
 }
 
@@ -87,8 +81,10 @@ func benchmark_process(req* http.Request, count int) ([]float64){
 
 	// collect responses
 	for j := 0; j < count; j++ {
-		req_times[count] = <- req_time_chan
+		req_times[j] = <- req_time_chan
 	}
+
+	close(req_time_chan)
 
 	return req_times
 }
