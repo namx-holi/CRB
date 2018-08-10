@@ -38,9 +38,6 @@ func main() {
 		fmt.Println("We are not running in verbose mode")
 	}
 
-	// channel for request times
-	// size is the number of requests + 1 as to not be blocked
-	request_times := make(chan float64, *countPtr + 1)
 
 	// build request
 	req, err := http.NewRequest("GET", *urlPtr, nil)
@@ -48,10 +45,15 @@ func main() {
 		fmt.Printf("NewRequest: %s", err)
 		return
 	}
+
+	// number of processes
+	for loopNb := 1; loopNb <= *loopPtr; loopNb++ {
+		
+	}
 }
 
 
-func time_response(req_times chan<- float64, req* http.Request) {
+func time_response(req* http.Request, req_time_chan chan<- float64) {
 	// http client
 	client := &http.Client{}
 
@@ -65,5 +67,25 @@ func time_response(req_times chan<- float64, req* http.Request) {
 		fmt.Printf("Do: %s\n", err)
 	}
 
-	req_times <- elapsed.Seconds() * 1000
+	req_time_chan <- elapsed.Seconds() * 1000
+}
+
+
+func benchmark_process(req* http.Request, count int) ([]float64){
+	// channel for request times
+	req_time_chan := make(chan float64, count)
+
+	req_times := make([]float64, count)
+
+	// start all requests
+	for i := 0; i < count; i++ {
+		go time_response(req, req_time_chan)
+	}
+
+	// collect responses
+	for j := 0; j < count; j++ {
+		req_times[count] = <- req_time_chan
+	}
+
+	return req_times
 }
