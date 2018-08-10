@@ -46,9 +46,12 @@ func main() {
 		return
 	}
 
+	// init array for storing all the stats
+	all_times := make([][]float64, *loopPtr)
+
 	// number of processes
-	for loopNb := 1; loopNb <= *loopPtr; loopNb++ {
-		
+	for loopNb := 0; loopNb < *loopPtr; loopNb++ {
+		all_times[loopNb] = benchmark_process(req, *countPtr)
 	}
 }
 
