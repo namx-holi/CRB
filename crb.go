@@ -21,6 +21,12 @@ func main() {
 	verbosePtr := flag.Bool("verbose", false, "enable extra information")
 	flag.Parse()
 
+	// if no URL specified
+	if (*urlPtr == "") {
+		fmt.Println("Please enter a URL to hit with: -url \"https://...\"")
+		return
+	}
+
 	fmt.Printf("URL to request: %s\n", *urlPtr)
 	fmt.Printf("We will hit this with %d hits\n", *countPtr)
 	fmt.Printf("We will repeat this process %d times\n", *loopPtr)
@@ -30,6 +36,17 @@ func main() {
 		fmt.Println("We are running in verbose mode")
 	} else {
 		fmt.Println("We are not running in verbose mode")
+	}
+
+	// channel for request times
+	// size is the number of requests + 1 as to not be blocked
+	request_times := make(chan float64, *countPtr + 1)
+
+	// build request
+	req, err := http.NewRequest("GET", *urlPtr, nil)
+	if err != nil {
+		fmt.Printf("NewRequest: %s", err)
+		return
 	}
 }
 
