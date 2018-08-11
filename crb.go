@@ -25,37 +25,46 @@ func main() {
 		return
 	}
 
+	results := run_benchmark(*urlPtr, *loopPtr, *countPtr, *cooldownPtr, *verbosePtr)
+
+	fmt.Printf("%s", results)
+}
+
+func run_benchmark(url string, loops int, count int, cooldown int, verbose bool) ([][]float64) {
 	// build request
-	req, err := http.NewRequest("GET", *urlPtr, nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Printf("NewRequest: %s", err)
-		return
+		fmt.Printf("NewRequest error: %s\n", err)
 	}
 
 	// init array for storing all the stats
-	all_times := make([][]float64, *loopPtr)
+	results := make([][]float64, loops)
 
 	// number of processes
-	for loopNb := 1; loopNb <= *loopPtr; loopNb++ {
-		if *loopPtr > 1 {
-			fmt.Printf("\n--LOOP %d OF %d--\n", loopNb, *loopPtr)
+	for loopNb := 1; loopNb <= loops; loopNb++ {
+		if loops > 1 {
+			fmt.Printf("\n--LOOP %d OF %d--\n", loopNb, loops)
 		}
 
-		all_times[loopNb-1] = benchmark_process(req, *countPtr)
+		result := benchmark_process(req, count)
 
-		if *verbosePtr {
+		if verbose {
 			fmt.Printf("\n\n  --STATS FOR LOOP %d--\n", loopNb)
-			fmt.Printf("    Min response time was:    %fms\n", calculate_min(all_times[loopNb-1]))
-			fmt.Printf("    Mean response time was:   %fms\n", calculate_mean(all_times[loopNb-1]))
-			fmt.Printf("    Max response time was:    %fms\n", calculate_max(all_times[loopNb-1]))
-			fmt.Printf("    Median response time was: %fms\n", calculate_median(all_times[loopNb-1]))
+			fmt.Printf("    Min response time was:    %fms\n", calculate_min(result))
+			fmt.Printf("    Mean response time was:   %fms\n", calculate_mean(result))
+			fmt.Printf("    Max response time was:    %fms\n", calculate_max(result))
+			fmt.Printf("    Median response time was: %fms\n", calculate_median(result))
 		}
 		fmt.Printf("\n\n")
 
-		if loopNb == *loopPtr {
-			time.Sleep(time.Duration(*cooldownPtr) * time.Millisecond)
+		results[loopNb-1] = result
+
+		if loopNb != loops {
+			time.Sleep(time.Duration(cooldown) * time.Millisecond)
 		}
 	}
+
+	return results
 }
 
 func benchmark_process(req* http.Request, count int) ([]float64){
