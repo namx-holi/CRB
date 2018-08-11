@@ -33,7 +33,8 @@ func main() {
 
 	compiled_results := compile_results(results)
 
-	fmt.Println(compiled_results)
+	fmt.Printf("\n--OVERALL STATS--\n")
+	display_stats(compiled_results, 1)
 }
 
 func run_benchmark(url string, loops int, count int, cooldown int, verbose bool) ([][]float64) {
@@ -127,9 +128,9 @@ func compile_results(results [][]float64) ([]float64) {
 func calculate_min(req_times []float64) (float64) {
 	var min_value float64 = req_times[0]
 
-	for i := 1; i < len(req_times); i++ {
-		if req_times[i] < min_value {
-			min_value = req_times[i]
+	for _, result := range req_times {
+		if result < min_value {
+			min_value = result
 		}
 	}
 
@@ -139,9 +140,9 @@ func calculate_min(req_times []float64) (float64) {
 func calculate_max(req_times []float64) (float64) {
 	var max_value float64 = req_times[0]
 
-	for i := 1; i < len(req_times); i++ {
-		if req_times[i] > max_value {
-			max_value = req_times[i]
+	for _, result := range req_times {
+		if result > max_value {
+			max_value = result
 		}
 	}
 
@@ -151,8 +152,8 @@ func calculate_max(req_times []float64) (float64) {
 func calculate_mean(req_times []float64) (float64) {
 	var total_value float64 = 0
 
-	for i := 0; i < len(req_times); i++ {
-		total_value += req_times[i]
+	for _, value := range req_times {
+		total_value += value
 	}
 
 	return total_value / float64(len(req_times))
