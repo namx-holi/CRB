@@ -8,6 +8,7 @@ import (
 	// "math"
 	"flag"
 	"strings"
+	"sort"
 )
 
 const INDENTATION_WIDTH int = 2
@@ -30,7 +31,9 @@ func main() {
 
 	results := run_benchmark(*urlPtr, *loopPtr, *countPtr, *cooldownPtr, *verbosePtr)
 
-	fmt.Printf("%s", results)
+	compiled_results := compile_results(results)
+
+	fmt.Println(compiled_results)
 }
 
 func run_benchmark(url string, loops int, count int, cooldown int, verbose bool) ([][]float64) {
@@ -104,6 +107,21 @@ func time_response(req* http.Request, req_time_chan chan<- float64) {
 	}
 
 	req_time_chan <- elapsed.Seconds() * 1000
+}
+
+func compile_results(results [][]float64) ([]float64) {
+	var compiled_results []float64
+
+	for _, result_set := range results {
+		for _, result := range result_set {
+			compiled_results = append(compiled_results, result)
+		}
+	}
+
+	// sort em all
+	sort.Float64s(compiled_results)
+
+	return compiled_results
 }
 
 func calculate_min(req_times []float64) (float64) {
