@@ -16,7 +16,7 @@ func main() {
 	countPtr := flag.Int("count", 1, "number of desired concurrent hits")
 	loopPtr := flag.Int("loops", 1, "number of times to repeat the process")
 	cooldownPtr := flag.Int("cooldown", 1000, "ms to wait between loops")
-	// verbosePtr := flag.Bool("verbose", false, "enable extra information")
+	verbosePtr := flag.Bool("verbose", false, "enable extra information")
 	flag.Parse()
 
 	// if no URL specified
@@ -38,12 +38,23 @@ func main() {
 	// number of processes
 	for loopNb := 1; loopNb <= *loopPtr; loopNb++ {
 		if *loopPtr > 1 {
-			fmt.Printf("--LOOP %d OF %d--\n", loopNb, *loopPtr)
+			fmt.Printf("\n--LOOP %d OF %d--\n", loopNb, *loopPtr)
 		}
 
 		all_times[loopNb-1] = benchmark_process(req, *countPtr)
 
-		time.Sleep(time.Duration(*cooldownPtr) * time.Millisecond)
+		if *verbosePtr {
+			fmt.Printf("\n\n  --STATS FOR LOOP %d--\n", loopNb)
+			fmt.Printf("    Min response time was:    %fms\n", calculate_min(all_times[loopNb-1]))
+			fmt.Printf("    Mean response time was:   %fms\n", calculate_mean(all_times[loopNb-1]))
+			fmt.Printf("    Max response time was:    %fms\n", calculate_max(all_times[loopNb-1]))
+			fmt.Printf("    Median response time was: %fms\n", calculate_median(all_times[loopNb-1]))
+		}
+		fmt.Printf("\n\n")
+
+		if loopNb == *loopPtr {
+			time.Sleep(time.Duration(*cooldownPtr) * time.Millisecond)
+		}
 	}
 }
 
@@ -109,7 +120,7 @@ func calculate_max(req_times []float64) (float64) {
 	return max_value
 }
 
-func calculate_average(req_times []float64) (float64) {
+func calculate_mean(req_times []float64) (float64) {
 	var total_value float64 = 0
 
 	for i := 0; i < len(req_times); i++ {
@@ -123,7 +134,7 @@ func calculate_median(req_times []float64) (float64) {
 	n := len(req_times)
 
 	if (n % 2) == 0 {
-		// average of values either side of the middle
+		// mean of values either side of the middle
 		return (req_times[n/2 - 1] + req_times[n/2])/2.0
 	}
 	return req_times[(n-1)/2]
