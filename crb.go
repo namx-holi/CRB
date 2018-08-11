@@ -7,7 +7,10 @@ import (
 	"time"
 	// "math"
 	"flag"
+	"strings"
 )
+
+const INDENTATION_WIDTH int = 2
 
 func main() {
 
@@ -50,10 +53,8 @@ func run_benchmark(url string, loops int, count int, cooldown int, verbose bool)
 
 		if verbose {
 			fmt.Printf("\n\n  --STATS FOR LOOP %d--\n", loopNb)
-			fmt.Printf("    Min response time was:    %fms\n", calculate_min(result))
-			fmt.Printf("    Mean response time was:   %fms\n", calculate_mean(result))
-			fmt.Printf("    Max response time was:    %fms\n", calculate_max(result))
-			fmt.Printf("    Median response time was: %fms\n", calculate_median(result))
+			display_stats(result, 2)
+
 		}
 		fmt.Printf("\n\n")
 
@@ -147,4 +148,12 @@ func calculate_median(req_times []float64) (float64) {
 		return (req_times[n/2 - 1] + req_times[n/2])/2.0
 	}
 	return req_times[(n-1)/2]
+}
+
+func display_stats(req_times []float64, indent int) {
+	indentation := strings.Repeat(" ", indent*INDENTATION_WIDTH)
+	fmt.Printf("%sMin response time was:    %fms\n", indentation, calculate_min(req_times))
+	fmt.Printf("%sMean response time was:   %fms\n", indentation, calculate_mean(req_times))
+	fmt.Printf("%sMax response time was:    %fms\n", indentation, calculate_max(req_times))
+	fmt.Printf("%sMedian response time was: %fms\n", indentation, calculate_median(req_times))
 }
