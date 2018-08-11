@@ -50,7 +50,7 @@ func run_benchmark(url string, loops int, count int, cooldown int, verbose bool)
 	// number of processes
 	for loopNb := 1; loopNb <= loops; loopNb++ {
 		if loops > 1 {
-			fmt.Printf("\n--LOOP %d OF %d--\n", loopNb, loops)
+			fmt.Printf("--LOOP %d OF %d--\n", loopNb, loops)
 		}
 
 		result := benchmark_process(req, count)
@@ -84,8 +84,11 @@ func benchmark_process(req* http.Request, count int) ([]float64){
 	}
 
 	// collect responses
+	var response_time float64
 	for j := 0; j < count; j++ {
-		req_times[j] = <- req_time_chan
+		response_time = <- req_time_chan
+		fmt.Printf("  Recieved response [%d/%d] (%fms)  \r", j+1, count, response_time)
+		req_times[j] = response_time
 	}
 
 	close(req_time_chan)
