@@ -16,6 +16,6 @@ crb -url **URL** [-count **COUNT**] [-loops **LOOPS**] [-cooldown **COOLDOWN**] 
 - **VERBOSE** (optional, default false) : If to display extra information about loops
 
 ### Examples
-crb -url "http://localhost"
-crb -url "http://localhost" -count 5 -verbose
-crb -url "http://localhost" -count 10 -loops 5 -cooldown 3000 -verbose
+* crb -url "http://localhost"
+* crb -url "http://localhost" -count 5 -verbose
+* crb -url "http://localhost" -count 10 -loops 5 -cooldown 3000 -verbose
