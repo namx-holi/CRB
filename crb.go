@@ -49,13 +49,11 @@ func run_benchmark(url string, loops int, count int, cooldown int, verbose bool)
 
 	// number of processes
 	for loopNb := 1; loopNb <= loops; loopNb++ {
-		if loops > 1 {
-			fmt.Printf("--LOOP %d OF %d--\n", loopNb, loops)
-		}
+		fmt.Printf("--LOOP %d OF %d--\n", loopNb, loops)
 
 		result := benchmark_process(req, count)
 
-		if verbose {
+		if verbose && loops > 1{
 			fmt.Printf("\n\n  --STATS FOR LOOP %d--\n", loopNb)
 			display_stats(result, 2)
 
