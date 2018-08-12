@@ -8,8 +8,8 @@ Written in Go.
 1. run **go install**
 
 ## Usage
-crb -url **URL** [-count **COUNT**] [-loops **LOOPS**] [-cooldown **COOLDOWN**] [-verbose]
-- **URL** : URL to request
+crb -**url** URL [-**count** COUNT] [-**loops** LOOPS] [-**cooldown** COOLDOWN] [-**verbose**]
+- **URL** (required) : URL to request
 - **COUNT** (optional, default 1) : How many concurrent requests to make at once
 - **LOOPS** (optional, default 1) : How many times to repeat the process for extra accuracy
 - **COOLDOWN** (optional, default 1000) : How many milliseconds to wait between loops
