@@ -113,6 +113,7 @@ def write_csv_to_file(csv_text, filename):
 
 if __name__ == "__main__":
 	counts = [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 50, 75, 100, 150, 200]
+	# counts = [1]
 	looking_for = ["Min","Max","Mean","Median"]
 	url = "http://localhost"
 	loops = 5
@@ -121,8 +122,9 @@ if __name__ == "__main__":
 	results = run_full_benchmark(url, counts, looking_for,
 		loops=loops, cooldown=cooldown)
 
-	print("\n\n\n")
+	print("\n")
 
 	csv_text = stats_to_csv(results, counts, looking_for)
 	print(csv_text)
+	print("")
 	write_csv_to_file(csv_text, "results.csv")
