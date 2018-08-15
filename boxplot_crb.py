@@ -153,9 +153,11 @@ def boxplot_results(results, counts):
 
 	# make sure we start at 0 for each axis please
 	# for xmax, find the last count and add the last width on so there's
-	# space for the last boxplot
+	# space for the last boxplot. similarly for xmin
 	xmax = counts[-1] + widths[-1]
-	ax.set_xlim(xmin=0, xmax=xmax)
+	xmin = counts[0] - widths[0]
+	# ax.set_xlim(xmin=0, xmax=xmax)
+	ax.set_xlim(xmin=xmin, xmax=xmax)
 	ax.set_ylim(ymin=0)
 
 	# set titles
@@ -164,6 +166,8 @@ def boxplot_results(results, counts):
 	ax.set_ylabel("Response time (ms)")
 
 	plt.show()
+
+	f.savefig("plot.pdf", bbox_inches='tight')
 
 
 #?????????
