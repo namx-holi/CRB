@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	// "math"
 	"flag"
 	"strings"
 	"sort"
@@ -16,11 +15,12 @@ const INDENTATION_WIDTH int = 2
 func main() {
 
 	// flags
-	urlPtr := flag.String("url", "", "URL to request")
-	countPtr := flag.Int("count", 1, "number of desired concurrent hits")
-	loopPtr := flag.Int("loops", 1, "number of times to repeat the process")
-	cooldownPtr := flag.Int("cooldown", 1000, "ms to wait between loops")
-	verbosePtr := flag.Bool("verbose", false, "enable extra information")
+	urlPtr            := flag.String("url", "", "URL to request")
+	countPtr          := flag.Int("count", 1, "number of desired concurrent hits")
+	loopPtr           := flag.Int("loops", 1, "number of times to repeat the process")
+	cooldownPtr       := flag.Int("cooldown", 1000, "ms to wait between loops")
+	verbosePtr        := flag.Bool("verbose", false, "enable extra information")
+	displayResultsPtr := flag.Bool("display", false, "write all results to screen")
 	flag.Parse()
 
 	// if no URL specified
@@ -33,8 +33,13 @@ func main() {
 
 	compiled_results := compile_results(results)
 
-	fmt.Printf("\n--OVERALL STATS--\n")
-	display_stats(compiled_results, 1)
+	if *displayResultsPtr {
+		fmt.Printf("\n--DISPLAYING RESULTS--\n")
+		display_results(compiled_results)
+	} else {
+		fmt.Printf("\n--OVERALL STATS--\n")
+		display_stats(compiled_results, 1)
+	}
 }
 
 func run_benchmark(url string, loops int, count int, cooldown int, verbose bool) ([][]float64) {
@@ -176,4 +181,11 @@ func display_stats(req_times []float64, indent int) {
 	fmt.Printf("%sMean response time was:   %fms\n", indentation, calculate_mean(req_times))
 	fmt.Printf("%sMax response time was:    %fms\n", indentation, calculate_max(req_times))
 	fmt.Printf("%sMedian response time was: %fms\n", indentation, calculate_median(req_times))
+}
+
+func display_results(compiled_results []float64) {
+	for _, value := range compiled_results[:len(compiled_results)-1] {
+		fmt.Printf("%f, ", value)
+	}
+	fmt.Printf("%f\n", compiled_results[len(compiled_results)-1])
 }
