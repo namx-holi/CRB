@@ -19,3 +19,9 @@ crb -**url** URL [-**count** COUNT] [-**loops** LOOPS] [-**cooldown** COOLDOWN] 
 * crb -url "http://localhost"
 * crb -url "http://localhost" -count 5 -verbose
 * crb -url "http://localhost" -count 10 -loops 5 -cooldown 3000 -verbose
+
+
+#### For boxplot_crb.py
+- Change the url on line 235 to the url you want to request
+- Make sure you have matplotlib and numpy
+- Run!
